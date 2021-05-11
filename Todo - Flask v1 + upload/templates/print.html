@@ -1,0 +1,25 @@
+<html>
+	<head>
+		<style>
+		table, th, td {
+		  border: 1px solid black;
+		  border-collapse: collapse;
+		}
+		</style>
+	</head>
+	<body>
+		
+		<table>
+		<tr>
+			<th>Todo List</th>
+		</tr>
+		
+		{% for row in data %}
+		<tr>
+			<td> {{ row[0] }}</td>
+		</tr> 
+		{% endfor %}
+		
+		</table>
+	</body>
+</html>

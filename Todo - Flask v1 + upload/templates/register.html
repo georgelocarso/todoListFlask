@@ -1,0 +1,26 @@
+<!DOCTYPE HTML>
+<!-- berikut merupakan tampilan register-->
+<html>
+    <head>
+        <title>Halaman Register</title>
+        <link rel="stylesheet" type="text/css" href="../static/register.css"
+    </head>
+   
+    <body>
+        <div class="container">
+          <h1>Register</h1>
+            <p style="color:green; margin-bottom: 8px;">{{ pesan }}</p>
+			
+			<form action="" method="post">
+				<input type="text" placeholder="Username" name="uname">
+				<input type="password" placeholder="Password" name="pass">
+				<input type="password" placeholder="Re-Password" name="repass">
+				<button>Register</button>
+				<h4>Already have an account?, <a href="/">Here</a></h4> 
+			</form>
+			{% if error %}
+			<p class="error" style="text-align:center; color:red;"><strong>Error:</strong> {{ error }}</p>
+			{% endif %}
+        </div>     
+    </body>
+</html>
