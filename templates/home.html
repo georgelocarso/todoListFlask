@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<!-- https://dev.to/codingnepal/todo-list-app-using-html-css-javascript-5e7p -->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Halaman Home</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="../static/home.css">
+	<script>
+		var username = '{{uname_from_flask}}'; /*mengambil username dari flask dan menyimpan ke dalam variable username*/
+	</script>
+	 <script src="https://use.fontawesome.com/2342bcf2c5.js"></script>
+	 <style>
+	/* Tooltip container */
+	.tooltip {
+	  position: relative;
+	  display: inline-block;
+	  
+	}
+
+	/* Tooltip text */
+	.tooltip .tooltiptext {
+	  visibility: hidden;
+	  width: 100px;
+	  background-color: black;
+	  color: #fff;
+	  text-align: center;
+	  padding: 5px 0;
+	  border-radius: 6px;
+	  font-size:10px;
+ 
+	  /* memposisikan tooltip text*/
+	  position: absolute;
+	  z-index: 1;
+  top: 0px;
+  left: 110%;
+	}
+
+	/*  menunjukkan tooltip text disaat mouse berada di container */
+	.tooltip:hover .tooltiptext {
+	  visibility: visible;
+	}
+	</style>
+</head>
+<!--tampilan home-->
+<body>
+	<!-- Menampilkan gambar profile, clickable untuk merubah gambarnya.-->
+  	<div class="wrapper2 tooltip">
+  		<a href="/profile">
+  			<img src="../static/images/default_image.png" class="ikon">
+  		</a>  		
+  		<span class="tooltiptext">Profile</span>
+  	</div>
+  	<!-- Menampilkan menu untuk melakukan konversi ke PDF -->
+  	<div class="wrapper2 tooltip">
+  		<a href="/print">
+  			<img src="../static/images/ikon_pdf.png" class="ikonpdf">
+  		</a>
+  		<span class="tooltiptext">Convert to PDF</span>
+  	</div>
+  	<!-- Menu untuk mengirimkan list ke orang lain menggunakan email -->
+  	<div class="wrapper2 tooltip">
+  		<a href="">
+  			<img src="../static/images/ikon_share.png" class="ikonpdf">
+  		</a>
+  		<span class="tooltiptext">Share your Lists</span>
+  	</div>
+  
+  <div class="wrapper">
+    <header>Todo App</header>
+	<div><h3>Hello,&nbsp;&nbsp;{{uname_from_flask}} 
+
+	 <!-- ikon logout -->
+	<div class="tooltip"><a href="/logout" ><i class="fa fa-sign-out" style="margin-left: 10px; color: #FF0000;" aria-hidden="true"></i></a>
+	  <span class="tooltiptext">logout</span>
+	</div>
+	</h3>
+
+	 </div>
+    <div class="inputField">
+      <input type="text" placeholder="Add your new todo">
+      <button><i>+</i></button>
+    </div>
+    <ul class="todoList">
+      <!-- data datang dari local storage -->
+    </ul>
+    <div class="footer">
+      <span>You have <span class="pendingTasks"></span> pending tasks</span>
+      <button>Clear All</button>
+    </div>
+  </div>
+ 
+
+  <script>
+	const inputBox = document.querySelector(".inputField input");
+	const addBtn = document.querySelector(".inputField button");
+	const todoList = document.querySelector(".todoList");
+	const deleteAllBtn = document.querySelector(".footer button");
+	let listArray=[];
+	
+	// onkeyup event
+	inputBox.onkeyup = ()=>{
+	  let userEnteredValue = inputBox.value; //mengambil nilai yang dimasukan user
+	  if(userEnteredValue.trim() != 0){ //jika nilai dari user bukan hanya spasi
+		addBtn.classList.add("active"); //mengaktifkan tombol add
+	  }else{
+		addBtn.classList.remove("active"); //menonaktifkan tombol add
+	  }
+	}
+
+	showTasks(); //memanggil function showTask()
+
+	addBtn.onclick = async ()=>{ // disaat user mengklik tombol plus
+	  response = await fetch('/newTask?username='+username+'&newTask='+inputBox.value);
+	  await showTasks(); //memanggil function showTask()
+	  addBtn.classList.remove("active"); //menonaktifkan tombol add setelah task ditambahkan
+	}
+
+	async function showTasks(){
+	  response = await fetch('/getTask?username='+username);
+	  listArray = await response.json();
+	  
+	  const pendingTasksNumb = document.querySelector(".pendingTasks");
+	  pendingTasksNumb.textContent = listArray.length; //mengoper panjang array di dalam pendingtask
+	  if(listArray.length > 0){ //jika panjang array lebih dari 0
+		deleteAllBtn.classList.add("active"); //mengaktifkan tombol delete
+	  }else{
+		deleteAllBtn.classList.remove("active"); //menonaktifkan tombol delete
+	  }
+	  let newLiTag = "";
+	  listArray.forEach((element, index) => {
+	  //element[1] artinya row ke 1(itung dari 0)
+		newLiTag += `<li>${element[1]}
+						<button onclick="UpdateTask(${element[0]})">
+							<i class = "fa fa-pencil-square-o"></i>
+						</button>
+						<span class="icon" onclick="deleteTask(${element[0]})">
+							<i>X</i>
+						</span>
+					</li>`;
+	  });
+	  todoList.innerHTML = newLiTag; // menambahkan tag li baru didalam tag ul
+	  inputBox.value = ""; //disaat task ditambahkan, input field menjadi kosong
+	}
+
+	// delete task function
+	async function deleteTask(index){
+	  response = await fetch('/deleteTask?index='+index);
+	  await showTasks(); //memanggil function showTask()
+	}
+	
+	// update task function
+	async function UpdateTask(index){
+	  let NewTask = prompt("Update Task");
+	  if(NewTask!==null){
+		response = await fetch('/updateTask?index='+index+'&newTask='+NewTask);
+		await showTasks(); //memanggil function showTask()
+	  }
+	}
+
+	// delete all tasks function
+	deleteAllBtn.onclick = async()=>{
+	  response = await fetch('/deleteAllTask');
+	  await showTasks(); //memanggil function showTask()
+	}
+  </script>
+
+</body>
+</html>
