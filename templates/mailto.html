@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<!-- https://dev.to/codingnepal/todo-list-app-using-html-css-javascript-5e7p -->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Halaman Home</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="../static/home.css">
+	<script>
+		var username = '{{uname_from_flask}}'; /*mengambil username dari flask dan menyimpan ke dalam variable username*/
+	</script>
+	 <script src="https://use.fontawesome.com/2342bcf2c5.js"></script>
+	 <style>
+	/* Tooltip container */
+	.tooltip {
+	  position: relative;
+	  display: inline-block;
+	  
+	}
+
+	/* Tooltip text */
+	.tooltip .tooltiptext {
+	  visibility: hidden;
+	  width: 100px;
+	  background-color: black;
+	  color: #fff;
+	  text-align: center;
+	  padding: 5px 0;
+	  border-radius: 6px;
+	  font-size:10px;
+ 
+	  /* memposisikan tooltip text*/
+	  position: absolute;
+	  z-index: 1;
+  top: 0px;
+  left: 110%;
+	}
+
+	/*  menunjukkan tooltip text disaat mouse berada di container */
+	.tooltip:hover .tooltiptext {
+	  visibility: visible;
+	}
+	</style>
+</head>
+<!--tampilan home-->
+<body>
+	<!-- Menampilkan gambar profile, clickable untuk merubah gambarnya.-->
+  	<div class="wrapper2 tooltip">
+  		<a href="/profile">
+  			<img src="../static/upload/{{imgName}}" class="ikon">
+  		</a>  		
+  		<span class="tooltiptext">Profile</span>
+  	</div>
+  	<!-- Menampilkan menu untuk melakukan konversi ke PDF -->
+  	<div class="wrapper2 tooltip">
+  		<a href="/print">
+  			<img src="../static/images/ikon_pdf.png" class="ikonpdf">
+  		</a>
+  		<span class="tooltiptext">Convert to PDF</span>
+  	</div>
+  	<!-- Menu untuk mengirimkan list ke orang lain menggunakan email -->
+  	<div class="wrapper2 tooltip">
+  		<a href="/home">
+  			<img src="../static/images/ikon_back.png" class="ikonpdf">
+  		</a>
+  		<span class="tooltiptext">back to Home</span>
+  	</div>
+  
+  <div class="wrapper">
+    <header>Todo App</header>
+	<div>
+	<h3>Hello,&nbsp;&nbsp;{{uname_from_flask}} 
+
+	 <!-- ikon logout -->
+	<div class="tooltip"><a href="/logout" ><i class="fa fa-sign-out" style="margin-left: 10px; color: #FF0000;" aria-hidden="true"></i></a>
+	  <span class="tooltiptext">logout</span>
+	</div>
+	</h3>
+
+	</div>
+
+	{% with messages = get_flashed_messages() %}
+    {% if messages %}
+    
+        {% for message in messages %}	
+			<p>{{ message }}</p>
+        {% endfor %}
+    
+    {% endif %}
+    {% endwith %}
+
+	<form method="POST">
+		<div class="inputField">
+		
+			<input type="email" name="to" placeholder="Email@mail.com" required>
+			<input type="text" name="subject" placeholder="Subject">
+			
+	
+			</div>
+		<textarea name="message" class="todoList" rows="10" cols="50"> 
+		
+		</textarea>
+	
+		<button type="submit">SEND</button>
+
+	</form>
+  </div>
+ 
+
+  <script>
+
+
+	const todoList = document.querySelector(".todoList");
+	const deleteAllBtn = document.querySelector(".footer button");
+
+	showTasks(); //memanggil function showTask()
+
+
+
+	async function showTasks(){
+	  response = await fetch('/getTask?username='+username);
+	  listArray = await response.json();
+	  
+	  
+	  
+
+	  let newLiTag = "";
+	  let head = ['Todays Task : \n'];
+	  
+	  listArray.forEach((element, index) => {
+	  //element[1] artinya row ke 1(itung dari 0)
+		newLiTag += `- ${element[1]}\n`;
+	  });
+
+	  newArray = head.concat(newLiTag);
+	  
+	  todoList.innerHTML = newArray; // menambahkan tag li baru didalam tag ul
+	  inputBox.value = ""; //disaat task ditambahkan, input field menjadi kosong
+	}
+
+
+
+  </script>
+
+</body>
+</html>
