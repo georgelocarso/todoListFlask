@@ -3,15 +3,15 @@
 <html>
     <head>
         <title>Halaman Edit Profile</title>
-        <link rel="stylesheet" type="text/css" href="../static/e_profile.css"
+        <link rel="stylesheet" type="text/css" href="../static/e_profile.css">
     </head>
    
     <body>
         <div class="container">
           <h1>Edit Profile</h1>
 			<form action="" method="post">
-				<input type="text" placeholder="Username" name="uname">
-				<input type="password" placeholder="Password" name="pass">
+				<input type="text" placeholder="Username" name="uname" value="{{data[0]}}" readonly>
+				<input type="password" placeholder="Password" name="pass" value="{{data[1]}}">
 				<input type="password" placeholder="Re-Password" name="repass">
 				<button>Submit</button><button class="cancel" style="background: red;">Cancel</button>
 			</form>
