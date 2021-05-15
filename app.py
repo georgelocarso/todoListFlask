@@ -1,23 +1,16 @@
-from flask import Flask,render_template,request,redirect,url_for,session,make_response,flash
+from flask import Flask,render_template,request,redirect,url_for,session,make_response
 import sqlite3
 import json
 import pdfkit
 import os
 import os.path
 from werkzeug.utils import secure_filename
-from flask_mail import Mail, Message
-from json2html import *
-
 application =Flask(__name__)
 application.secret_key = "super secret key"
 application.config['UPLOAD_FOLDER'] = os.path.realpath('.') + '/static/upload'
 application.config['MAX_CONTENT_PATH'] = 10000000
 #https://docs.python.org/3/library/sqlite3.html <-- sumber referensi untuk sqlite
 
-application.config['MAIL_SERVER'] = 'smtp.gmail.com'
-application.config['MAIL_PORT'] = 587
-application.config['MAIL_USE_TLS'] = True
-application.config['MAIL_USE_SSL'] = False
 
 def setup():
     conn_setup = sqlite3.connect('database.db')
@@ -78,11 +71,7 @@ def home():
 
     if "username" in session:
         username_getFromsession = session["username"]
-        if os.path.isfile('static/upload/'+username_getFromsession+'.jpg'):
-            imgName = username_getFromsession+".jpg"
-        else:
-            imgName = "default_image.png"
-        return render_template("home.html",uname_from_flask=username_getFromsession, imgName=imgName)
+        return render_template("home.html",uname_from_flask=username_getFromsession)
     else : 
         return redirect(url_for("index"))
 
@@ -135,24 +124,7 @@ def profile():
 		imgName = "default_image.png"
 	
 	return render_template('profile.html',uname_from_flask=username_getFromsession,imgName=imgName)
-
-#edit profile / username or password
-@application.route('/edit_profile', methods=['GET','POST'])
-def editProfie():
-    username_getFromsession = session["username"]
-    openDB()
-    result = cursor.execute('SELECT * FROM user WHERE username=?', (username_getFromsession,))
-    data = cursor.fetchone()
-    if request.method == 'POST':
-        uname = request.form['uname']
-        pw = request.form['pass']
-        repw = request.form['repass']
-        if (pw == repw) :
-            cursor.execute('''UPDATE user set password=? where username=?''',(pw,uname))
-            conn.commit()
-            closeDB()
-            return redirect(url_for('index'))
-    return render_template('edit_profile.html',uname = username_getFromsession,data = data)
+    
     
 #mulai kebawah memakai model api
 @application.route('/getTask', methods=['GET'])    
@@ -239,56 +211,6 @@ def upload():
 		except:
 			return render_template('upload_gagal.html', filename=secure_filename(f.filename))
 	return render_template('form.html')
-
-
-@application.route('/mailto',methods=['GET', 'POST'])    
-def mailto():    
-    if request.method != 'POST':
-        username_getFromsession = session["username"]
-
-        openDB()
-        t = (username_getFromsession,)
-        cursor.execute("SELECT rowid,item FROM todo_item where username=?",t)
-        data=cursor.fetchall()
-        closeDB()
-
-
-        if "username" in session:
-            username_getFromsession = session["username"]
-            if os.path.isfile('static/upload/'+username_getFromsession+'.jpg'):
-                imgName = username_getFromsession+".jpg"
-            else:
-                imgName = "default_image.png"
-
-
-        return render_template("mailto.html",uname_from_flask=username_getFromsession, imgName=imgName)
-    else : 
-        # SENDING MESSAGE HERE IF THE REQUIREMENT TERPENUHI 
-        gmail_username = "thousandgeorges@gmail.com"
-        gmail_password = "learningflask"
-
-        to = request.form['to']
-        subject = request.form['subject']
-        message = request.form['message']
-        
-        application.config['MAIL_USERNAME'] = gmail_username
-        application.config['MAIL_PASSWORD'] = gmail_password
-        
-        msg = Message(subject, 
-            sender=gmail_username, recipients=[to])
-        msg.body = message
-        
-        try:
-            mail = Mail(application)
-            mail.connect()  
-            mail.send(msg)
-            # return f"<h1>Terkirim</h1>"
-            flash('Todo List Successfully sent to : '+to)
-            return redirect(url_for("home"))
-        except:
-            # return f"<h1>Failed</h1>"
-            flash('Todo List Failed sent to : '+to)
-            return redirect(url_for("mailto"))
-
+    
 if __name__ == '__main__':
     application.run(debug=True)

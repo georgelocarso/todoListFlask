@@ -47,7 +47,7 @@
 	<!-- Menampilkan gambar profile, clickable untuk merubah gambarnya.-->
   	<div class="wrapper2 tooltip">
   		<a href="/profile">
-  			<img src="../static/upload/{{imgName}}" class="ikon">
+  			<img src="../static/images/default_image.png" class="ikon">
   		</a>  		
   		<span class="tooltiptext">Profile</span>
   	</div>
@@ -60,7 +60,7 @@
   	</div>
   	<!-- Menu untuk mengirimkan list ke orang lain menggunakan email -->
   	<div class="wrapper2 tooltip">
-  		<a href="/mailto">
+  		<a href="">
   			<img src="../static/images/ikon_share.png" class="ikonpdf">
   		</a>
   		<span class="tooltiptext">Share your Lists</span>
@@ -77,15 +77,6 @@
 	</h3>
 
 	 </div>
-	 {% with messages = get_flashed_messages() %}
-	 {% if messages %}
-	 
-		 {% for message in messages %}	
-			 <p>{{ message }}</p>
-		 {% endfor %}
-	 
-	 {% endif %}
-	 {% endwith %}
     <div class="inputField">
       <input type="text" placeholder="Add your new todo">
       <button><i>+</i></button>

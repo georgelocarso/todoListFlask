@@ -1,61 +1,25 @@
 <html>
-
-<head>
-	<meta charset="UTF-8">
-	<title>Halaman Home</title>
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link rel="stylesheet" href="../static/home.css">
-	<script>
-		var username = '{{uname_from_flask}}'; /*mengambil username dari flask dan menyimpan ke dalam variable username*/
-	</script>
-	<script src="https://use.fontawesome.com/2342bcf2c5.js"></script>
-	<style>
-		/* Tooltip container */
-		.tooltip {
-			position: relative;
-			display: inline-block;
-
+	<head>
+		<style>
+		table, th, td {
+		  border: 1px solid black;
+		  border-collapse: collapse;
 		}
-
-		/* Tooltip text */
-		.tooltip .tooltiptext {
-			visibility: hidden;
-			width: 100px;
-			background-color: black;
-			color: #fff;
-			text-align: center;
-			padding: 5px 0;
-			border-radius: 6px;
-			font-size: 10px;
-
-			/* memposisikan tooltip text*/
-			position: absolute;
-			z-index: 1;
-			top: 0px;
-			left: 110%;
-		}
-
-		/*  menunjukkan tooltip text disaat mouse berada di container */
-		.tooltip:hover .tooltiptext {
-			visibility: visible;
-		}
-	</style>
-</head>
-
-<body>
-
-	<table>
+		</style>
+	</head>
+	<body>
+		
+		<table>
 		<tr>
 			<th>Todo List</th>
 		</tr>
-
+		
 		{% for row in data %}
 		<tr>
 			<td> {{ row[0] }}</td>
-		</tr>
+		</tr> 
 		{% endfor %}
-
-	</table>
-</body>
-
+		
+		</table>
+	</body>
 </html>
