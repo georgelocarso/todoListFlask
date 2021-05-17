@@ -213,8 +213,8 @@ def newTask():
 @application.route('/print', methods=['GET'])          
 def print():
     openDB()
-    #t = (request.args.get('username'),)
-    cursor.execute("SELECT item FROM todo_item where username='steven'")
+    t = (session["username"],)
+    cursor.execute("SELECT item FROM todo_item where username=?",t)
     data=cursor.fetchall()
     closeDB()
     rendered = render_template('print.html',data=data)
